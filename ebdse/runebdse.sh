@@ -32,3 +32,5 @@ host=node0
 /opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=offers tags=phase:add-item-token-triple cycles=$items cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
 
 /opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=offers tags=phase:add-offer-item-triple cycles=$offers cyclerate=1k host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+
+/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=offers tags=phase:add-item-prices cycles=$items cyclerate=1k host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens

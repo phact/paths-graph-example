@@ -160,7 +160,7 @@ blocks:
    phase: add-token-ingredient-triple
   statements:
     - >-
-     g.addV('token').property('tokenName',{tokenName}).as("token").addV('token').property('ingredientName',{ingredientName}).addE('INGREDIENT_TOKEN').from("token")
+     g.addV('token').property('tokenName',{tokenName}).as("token").addV('ingredient').property('ingredientName',{ingredientName}).addE('INGREDIENT_TOKEN').from("token")
 - name: add-ingredient-recipe-triple
   tags:
    phase: add-ingredient-recipe-triple

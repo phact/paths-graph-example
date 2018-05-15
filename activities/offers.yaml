@@ -1,0 +1,185 @@
+# http://localhost:8000/#view/%5BGraph%20Model%20(Avg%20Ratios%20Normalized)%7C%0A%20%20%5Bdivision%20(26)%5D1-115%5Bstore%20(3k)%5D%0A%20%20%5Bstore%20(3k)%5D115-115%5BtopSelling%20(3k)%5D%0A%20%20%5Bstore%20(3k)%5D115-150k%5Boffer%20(4M)%5D%0A%20%20%5Boffer%20(4M)%5D150k-150k%5Bitem%20(1.6M)%5D%0A%20%20%5Bitem%20(1.6M)%5D-%20substitute%20%5Bitem%20(1.6M)%5D%0A%20%20%5Bitem%20(1.6M)%5D%20complement%20-%5Bitem%20(1.6M)%5D%0A%20%20%5BtopSelling%20(3k)%5D115-230k%5Bitem%20(1.6M)%5D%0A%20%20%5Btoken%20(1.5M)%5D230k-230k%5Bitem%20(1.6M)%5D%0A%20%20%5Bingredient%20(150k)%5D2.3k-230k%5Btoken%20(1.5M)%5D%0A%20%20%5Brecipe%20(15k)%5D230-2.3k%5Bingredient%20(150k)%5D%0A%20%20%5Bcategory%20(200)%5D3-230%5Brecipe%20(15k)%5D%0A%5D%0A
+# [Graph Model (Avg Ratios Normalized)|
+#   [division (26)]1-115[store (3k)]
+#   [store (3k)]115-115[topSelling (3k)]
+#   [store (3k)]115-150k[offer (4M)]
+#   [offer (4M)]150k-150k[item (1.6M)]
+#   [item (1.6M)]- substitute [item (1.6M)]
+#   [item (1.6M)] complement -[item (1.6M)]
+#   [topSelling (3k)]115-230k[item (1.6M)]
+#   [token (1.5M)]230k-230k[item (1.6M)]
+#   [ingredient (150k)]2.3k-230k[token (1.5M)]
+#   [recipe (15k)]230-2.3k[ingredient (150k)]
+#   [category (200)]3-230[recipe (15k)]
+# ]
+# ./ebdse -vv run type=dsegraph yaml=offers tags=phase:create-graph cycles=1
+
+blocks:
+- name: create-graph
+  tags:
+   phase: create-graph
+  statements:
+   - system.graph('<<graphname:offers>>').ifNotExists().create()
+# ./ebdse -vv run type=dsegraph yaml=offers graphname=offers tags=phase:graph-schema cycles=1
+- name: graph-schema
+  tags:
+   phase: graph-schema
+  statements:
+   - >-
+    schema.propertyKey('divNumber').Text().ifNotExists().create();
+    schema.propertyKey('divCoupon').Text().ifNotExists().create();
+    schema.propertyKey('divStoreNumber').Text().ifNotExists().create();
+    schema.propertyKey('divUpc').Text().ifNotExists().create();
+    schema.propertyKey('sourceId').Text().ifNotExists().create();
+    schema.propertyKey('ingredientName').Text().ifNotExists().create();
+    schema.propertyKey('tokenName').Text().ifNotExists().create();
+    schema.propertyKey('categoryKey').Text().ifNotExists().create();
+
+    schema.propertyKey('updateDate').Bigint().ifNotExists().create();
+    schema.propertyKey('creationDate').Bigint().ifNotExists().create();
+    schema.propertyKey('upc').Int().ifNotExists().create();
+    schema.propertyKey('processDate').Bigint().ifNotExists().create();
+    schema.propertyKey('expirationDate').Bigint().ifNotExists().create();
+    schema.propertyKey('nFor').Text().ifNotExists().create();
+    schema.propertyKey('regularRetailAmount').Double().ifNotExists().create();
+    schema.propertyKey('loyaltyRetailAmount').Double().ifNotExists().create();
+    schema.propertyKey('promoDisplayPrice').Double().ifNotExists().create();
+    schema.propertyKey('promoType').Text().ifNotExists().create();
+    schema.propertyKey('description').Text().ifNotExists().create();
+    schema.propertyKey('divUpc').Int().ifNotExists().create();
+    schema.propertyKey('couponNumber').Int().ifNotExists().create();
+    schema.propertyKey('offerId').Int().ifNotExists().create();
+    schema.propertyKey('detailAmount').Int().ifNotExists().create();
+    schema.propertyKey('detailQty').Int().ifNotExists().create();
+    schema.propertyKey('savingsDesc').Int().ifNotExists().create();
+    schema.propertyKey('rewardType').Int().ifNotExists().create();
+    schema.propertyKey('minPurchase').Int().ifNotExists().create();
+    schema.propertyKey('minPurchaseQty').Int().ifNotExists().create();
+    schema.propertyKey('maxSavings').Int().ifNotExists().create();
+    schema.propertyKey('effectiveDate').Int().ifNotExists().create();
+    schema.propertyKey('expireDate').Int().ifNotExists().create();
+    schema.propertyKey('displayStartDate').Int().ifNotExists().create();
+    schema.propertyKey('displayEndDate').Int().ifNotExists().create();
+    schema.propertyKey('offerDescText').Int().ifNotExists().create();
+    schema.propertyKey('webDescText').Int().ifNotExists().create();
+    schema.propertyKey('eventType').Int().ifNotExists().create();
+    schema.propertyKey('offerType').Int().ifNotExists().create();
+    schema.propertyKey('title').Int().ifNotExists().create();
+    schema.propertyKey('slug').Int().ifNotExists().create();
+    schema.propertyKey('description').Int().ifNotExists().create();
+    schema.propertyKey('imageId').Int().ifNotExists().create();
+    schema.propertyKey('ingredientCount').Int().ifNotExists().create();
+    schema.propertyKey('prepTimeInMinutes').Int().ifNotExists().create();
+    schema.propertyKey('cookTimeInMinutes').Int().ifNotExists().create();
+    schema.propertyKey('handsOnTimeInMinutes').Int().ifNotExists().create();
+    schema.propertyKey('totalTimeInMinutes').Int().ifNotExists().create();
+    schema.propertyKey('mainCategory').Int().ifNotExists().create();
+    schema.propertyKey('subCategory').Int().ifNotExists().create();
+
+
+
+    schema.vertexLabel('division').partitionKey('divNumber').properties('creationDate', 'updateDate').ifNotExists().create();
+    schema.vertexLabel('store').partitionKey('divStoreNumber').properties('creationDate', 'updateDate').ifNotExists().create();
+    schema.vertexLabel('item').partitionKey('divUpc').properties('divNumber', 'upc', 'processDate', 'expirationDate', 
+        'nFor', 'regularRetailAmount', 'loyaltyRetailAmount', 'promoDisplayPrice', 'promoType', 'description', 'creationDate', 'updateDate').
+        ifNotExists().create();
+    schema.vertexLabel('offer').partitionKey('divCoupon').properties('couponNumber','offerId','detailAmount','detailQty','savingsDesc','rewardType',
+        'minPurchase','minPurchaseQty','maxSavings','effectiveDate','expireDate','displayStartDate','displayEndDate','offerDescText','webDescText',
+        'eventType','offerType','creationDate', 'updateDate').ifNotExists().create();
+    schema.vertexLabel('topSelling').partitionKey('divStoreNumber').properties('expireDate','sourceId','creationDate','updateDate').ifNotExists().create();
+    schema.vertexLabel('recipe').partitionKey('sourceId').properties('title', 'slug','description', 'imageId',
+        'ingredientCount','prepTimeInMinutes','cookTimeInMinutes','handsOnTimeInMinutes','totalTimeInMinutes','creationDate','updateDate').ifNotExists().create();
+    schema.vertexLabel('ingredient').partitionKey('ingredientName').properties('creationDate','creationDate').ifNotExists().create();
+    schema.vertexLabel('token').partitionKey('tokenName').properties('creationDate','creationDate').ifNotExists().create();
+    schema.vertexLabel('category').partitionKey('categoryKey').properties('mainCategory','subCategory','creationDate','creationDate').ifNotExists().create();
+
+    schema.propertyKey('rank').Int().ifNotExists().create();
+    schema.propertyKey('category').Text().ifNotExists().create();
+    schema.propertyKey('subCategory').Text().ifNotExists().create();
+    schema.propertyKey('qty').Int().ifNotExists().create();
+    schema.propertyKey('rewardYN').Text().ifNotExists().create();
+    schema.propertyKey('sortOrder').Text().ifNotExists().create();
+    schema.propertyKey('score').Text().ifNotExists().create();
+    schema.propertyKey('createTs').Text().ifNotExists().create();
+    schema.propertyKey('updateTs').Text().ifNotExists().create();
+
+
+    schema.edgeLabel('DIV_STORE').single().properties('creationDate','updateDate')
+        .connection('division', 'store').ifNotExists().create();
+    schema.edgeLabel('STORE_TSI').single().properties('creationDate','updateDate')
+        .connection('store', 'topSelling').ifNotExists().create();
+    schema.edgeLabel('TSI_ITEM').single().properties('rank','category','subCategory','qty','creationDate','updateDate')
+        .connection('topSelling', 'item').ifNotExists().create();
+    schema.edgeLabel('STORE_OFFER').single().properties('creationDate','rewardYN','updateDate')
+        .connection('store', 'offer').ifNotExists().create();
+    schema.edgeLabel('OFFER_ITEM').single().properties('creationDate','updateDate')
+        .connection('offer', 'item').ifNotExists().create();
+    schema.edgeLabel('RECIPE_CATEGORY').single().properties('creationDate','updateDate')
+        .connection('recipe', 'category').ifNotExists().create();
+    schema.edgeLabel('RECIPE_INGREDIENT').single().properties('sortOrder','creationDate','updateDate')
+        .connection('recipe', 'ingredient').ifNotExists().create();
+    schema.edgeLabel('INGREDIENT_TOKEN').single().properties('creationDate','updateDate')
+        .connection('ingredient', 'token').ifNotExists().create();
+    schema.edgeLabel('TOKEN_ITEM').single().properties('score','creationDate','updateDate')
+        .connection('token', 'item').ifNotExists().create();
+    schema.edgeLabel('COMPLEMENT').single().properties('rank','createTs','updateTs')
+        .connection('item', 'item').ifNotExists().create();
+    schema.edgeLabel('SUBSTITUTE').single().properties('createTs','updateTs')
+        .connection('item', 'item').ifNotExists().create();
+    schema.edgeLabel('DIV_OFFER').single().properties('creationDate','updateDate')
+        .connection('division', 'offer').ifNotExists().create();
+
+# ./ebdse -v run type=dsegraph yaml=offers graphname=offers tags=phase:dev-mode cycles=1
+- name: dev-mode
+  tags:
+   phase: dev-mode
+  statements:
+   - schema.config().option('graph.schema_mode').set('Development');
+# ./ebdse -v run type=dsegraph yaml=offers graphname=offers tags=phase:prod-mode cycles=1
+- name: prod-mode
+  tags:
+   phase: prod-mode
+  statements:
+   - schema.config().option('graph.schema_mode').set('Production');
+# ./ebdse -v run type=dsegraph yaml=offers graphname=offers tags=phase:add-offer-coupon-triple cycles=100000
+- name: add-offer-coupon-triple
+  tags:
+   phase: add-offer-coupon-triple
+  statements:
+    - >-
+     g.addV('offer').property('divCoupon',{divCoupon}).as("coupon").addV('item').property('divUpc',{divUpc}).addE('OFFER_ITEM').from("coupon")
+# ./ebdse -v run type=dsegraph yaml=offers graphname=offers tags=phase:add-item-token-triple cycles=100000
+- name: add-item-token-triple
+  tags:
+   phase: add-item-token-triple
+  statements:
+    - >-
+     g.addV('item').property('divUpc',{divUpc}).as("item").addV('token').property('tokenName',{tokenName}).addE('TOKEN_ITEM').from("item")
+- name: add-token-ingredient-triple
+  tags:
+   phase: add-token-ingredient-triple
+  statements:
+    - >-
+     g.addV('token').property('tokenName',{tokenName}).as("token").addV('ingredient').property('ingredientName',{ingredientName}).addE('INGREDIENT_TOKEN').from("token")
+- name: add-ingredient-recipe-triple
+  tags:
+   phase: add-ingredient-recipe-triple
+  statements:
+    - >-
+     g.addV('ingredient').property('ingredientName',{ingredientName}).as("ingredient").addV('recipe').property('sourceId',{sourceId}).addE('RECIPE_INGREDIENT').from("ingredient")
+- name: add-recipe-category-triple
+  tags:
+   phase: add-recipe-category-triple
+  statements:
+    - >-
+     g.addV('recipe').property('sourceId',{sourceId}).as("recipe").addV('category').property('categoryKey',{categoryKey}).addE('RECIPE_CATEGORY').from("recipe")
+
+
+bindings:
+ divCoupon: Shuffle(0L,<<offers:150000>>L,1); Mod(<<offers:150000>>); Template('offer-{}',LongToString());
+ divUpc: Mod(<<items:230000>>); Template('item-{}', LongToString());
+ tokenName: Shuffle(0L,<<tokens:230000>>,2); Mod(<<tokens:230000>>); Template('token-{}', LongToString());
+ ingredientName: Shuffle(0L,<<ingredients:2300>>,3); Mod(<<ingredients:2300>>); Template('ingredient-{}', LongToString());
+ sourceId: Shuffle(0L,<<recipes:230>>,3); Mod(<<recipes:230>>); Template('recipe-{}', LongToString());
+ categoryKey: Shuffle(0L,<<categories:3>>,4); Mod(<<categories:3>>); Template('category-{}', LongToString());
+

@@ -179,6 +179,22 @@ blocks:
   statements:
     - >-
      g.addV('item').property('divUpc',{divUpc}).property('regularRetailAmount',{regularRetailAmount}).property('loyaltyRetailAmount', {loyaltyRetailAmount})
+- name: query1
+  tags:
+   phase: read
+  statements:
+    - >-
+     g.V().has("item", "divUpc", {divUpc}).
+          in("OFFER_ITEM").
+               values("divCoupon")
+- name: query2
+  tags:
+   phase: read
+  statements:
+    - >-
+     g.V().has("offer", "divCoupon", {divCoupon}).
+         out("OFFER_ITEM").
+              values("divUpc")
 
 bindings:
  divCoupon: Shuffle(0L,<<offers:150000>>L,1); Mod(<<offers:150000>>); Template('offer-{}',LongToString());

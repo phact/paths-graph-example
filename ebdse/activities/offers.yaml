@@ -117,11 +117,11 @@ blocks:
     schema.edgeLabel('RECIPE_CATEGORY').single().properties('creationDate','updateDate')
         .connection('recipe', 'category').ifNotExists().create();
     schema.edgeLabel('RECIPE_INGREDIENT').single().properties('sortOrder','creationDate','updateDate')
-        .connection('recipe', 'ingredient').ifNotExists().create();
+        .connection('ingredient', 'recipe').ifNotExists().create();
     schema.edgeLabel('INGREDIENT_TOKEN').single().properties('creationDate','updateDate')
-        .connection('ingredient', 'token').ifNotExists().create();
+        .connection('token', 'ingredient').ifNotExists().create();
     schema.edgeLabel('TOKEN_ITEM').single().properties('score','creationDate','updateDate')
-        .connection('token', 'item').ifNotExists().create();
+        .connection('item', 'token').ifNotExists().create();
     schema.edgeLabel('COMPLEMENT').single().properties('rank','createTs','updateTs')
         .connection('item', 'item').ifNotExists().create();
     schema.edgeLabel('SUBSTITUTE').single().properties('createTs','updateTs')
@@ -141,10 +141,10 @@ blocks:
    phase: prod-mode
   statements:
    - schema.config().option('graph.schema_mode').set('Production');
-# ./ebdse -v run type=dsegraph yaml=offers graphname=offers tags=phase:add-offer-coupon-triple cycles=100000
-- name: add-offer-coupon-triple
+# ./ebdse -v run type=dsegraph yaml=offers graphname=offers tags=phase:add-offer-item-triple cycles=100000
+- name: add-offer-item-triple
   tags:
-   phase: add-offer-coupon-triple
+   phase: add-offer-item-triple
   statements:
     - >-
      g.addV('offer').property('divCoupon',{divCoupon}).as("coupon").addV('item').property('divUpc',{divUpc}).addE('OFFER_ITEM').from("coupon")
@@ -160,7 +160,7 @@ blocks:
    phase: add-token-ingredient-triple
   statements:
     - >-
-     g.addV('token').property('tokenName',{tokenName}).as("token").addV('ingredient').property('ingredientName',{ingredientName}).addE('INGREDIENT_TOKEN').from("token")
+     g.addV('token').property('tokenName',{tokenName}).as("token").addV('token').property('ingredientName',{ingredientName}).addE('INGREDIENT_TOKEN').from("token")
 - name: add-ingredient-recipe-triple
   tags:
    phase: add-ingredient-recipe-triple

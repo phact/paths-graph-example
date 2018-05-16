@@ -203,6 +203,5 @@ bindings:
  ingredientName: Shuffle(0L,<<ingredients:2300>>,3); Mod(<<ingredients:2300>>); Template('ingredient-{}', LongToString());
  sourceId: Shuffle(0L,<<recipes:230>>,3); Mod(<<recipes:230>>); Template('recipe-{}', LongToString());
  categoryKey: Shuffle(0L,<<categories:3>>,4); Mod(<<categories:3>>); Template('category-{}', LongToString());
- regularRetailAmount: Mod(<<items:230000>>); normal(10.0,8.0); Add(3);
- loyaltyRetailAmount: Mod(<<items:230000>>); normal(8.0,8.0);
-
+ regularRetailAmount: Mod(<<items:230000>>); normal(10,2); Add(3); ToLong()
+ loyaltyRetailAmount: Mod(<<items:230000>>); normal(8,2);ToLong()

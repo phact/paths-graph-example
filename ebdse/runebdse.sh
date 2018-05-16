@@ -19,6 +19,7 @@ categories=30
 threads=64
 host=node0
 graphname=offers2
+reads=100000
 #arg=-v
 
 /opt/ebdse/ebdse run type=dsegraph yaml=offers tags=phase:create-graph cycles=1 host=$host nameofgraph=$graphname
@@ -34,3 +35,7 @@ graphname=offers2
 /opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-item-token-triple cycles=$items cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
 
 /opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-offer-item-triple cycles=$offers cyclerate=1k host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+
+/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-item-prices cycles=$items cyclerate=1k host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+
+/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:read cycles=$reads cyclerate=1k host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens

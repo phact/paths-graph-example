@@ -15,20 +15,22 @@ tokens=2300000
 ingredients=23000
 recipes=2300
 categories=30
+
 threads=64
 host=node0
+graphname=offers2
 #arg=-v
 
-/opt/ebdse/ebdse run type=dsegraph yaml=offers tags=phase:create-graph cycles=1 host=$host
+/opt/ebdse/ebdse run type=dsegraph yaml=offers tags=phase:create-graph cycles=1 host=$host nameofgraph=$graphname
 
-/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=offers tags=phase:graph-schema cycles=1 host=$host
+/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:graph-schema cycles=1 host=$host
 
-/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=offers tags=phase:add-recipe-category-triple cycles=$recipes cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-recipe-category-triple cycles=$recipes cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
 
-/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=offers tags=phase:add-ingredient-recipe-triple cycles=$ingredients cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-ingredient-recipe-triple cycles=$ingredients cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
 
-/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=offers tags=phase:add-token-ingredient-triple cycles=$tokens cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-token-ingredient-triple cycles=$tokens cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
 
-/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=offers tags=phase:add-item-token-triple cycles=$items cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-item-token-triple cycles=$items cyclerate=1k host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
 
-/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=offers tags=phase:add-offer-item-triple cycles=$offers cyclerate=1k host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+/opt/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-offer-item-triple cycles=$offers cyclerate=1k host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens

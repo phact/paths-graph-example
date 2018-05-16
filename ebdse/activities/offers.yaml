@@ -19,7 +19,7 @@ blocks:
   tags:
    phase: create-graph
   statements:
-   - system.graph('<<graphname:offers>>').ifNotExists().create()
+   - system.graph('<<nameofgraph:offers>>').ifNotExists().create()
 # ./ebdse -vv run type=dsegraph yaml=offers graphname=offers tags=phase:graph-schema cycles=1
 - name: graph-schema
   tags:

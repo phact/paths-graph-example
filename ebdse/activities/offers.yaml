@@ -148,31 +148,46 @@ blocks:
   statements:
     - >-
      g.addV('offer').property('divCoupon',{divCoupon}).as("coupon").addV('item').property('divUpc',{divUpc}).addE('OFFER_ITEM').from("coupon")
-# ./ebdse -v run type=dsegraph yaml=offers graphname=offers tags=phase:add-item-token-triple cycles=100000
+  bindings:
+    divCoupon: Shuffle(0L,<<offeritem:150000>>L,1); Mod(<<offers:150000>>); Template('offer-{}',LongToString());
+    divUpc: Mod(<<offeritem:150000>>); Template('item-{}', LongToString());
 - name: add-item-token-triple
   tags:
    phase: add-item-token-triple
   statements:
     - >-
      g.addV('item').property('divUpc',{divUpc}).as("item").addV('token').property('tokenName',{tokenName}).addE('TOKEN_ITEM').from("item")
+  bindings:
+   divUpc: Mod(<<itemtoken:230000>>); Template('item-{}', LongToString());
+   tokenName: Shuffle(0L,<<itemtoken:230000>>,2); Mod(<<tokens:230000>>); Template('token-{}', LongToString());
 - name: add-token-ingredient-triple
   tags:
    phase: add-token-ingredient-triple
   statements:
     - >-
      g.addV('token').property('tokenName',{tokenName}).as("token").addV('ingredient').property('ingredientName',{ingredientName}).addE('INGREDIENT_TOKEN').from("token")
+  bindings:
+   ingredientName: Shuffle(0L,<<tokeningredient:230000>>,3); Mod(<<ingredients:2300>>); Template('ingredient-{}', LongToString());
+   tokenName: Shuffle(0L,<<tokeningredient:230000>>,2); Mod(<<tokens:230000>>); Template('token-{}', LongToString());
 - name: add-ingredient-recipe-triple
   tags:
    phase: add-ingredient-recipe-triple
   statements:
     - >-
      g.addV('ingredient').property('ingredientName',{ingredientName}).as("ingredient").addV('recipe').property('sourceId',{sourceId}).addE('RECIPE_INGREDIENT').from("ingredient")
+  bindings:
+   sourceId: Shuffle(0L, <<ingredientrecipe:2300>>,4); Mod(<<recipes:230>>); Template('recipe-{}', LongToString());
+   ingredientName: Shuffle(0L,<<ingredientrecipe:2300>>,3); Mod(<<ingredients:2300>>); Template('ingredient-{}', LongToString());
 - name: add-recipe-category-triple
   tags:
    phase: add-recipe-category-triple
   statements:
     - >-
      g.addV('recipe').property('sourceId',{sourceId}).as("recipe").addV('category').property('categoryKey',{categoryKey}).addE('RECIPE_CATEGORY').from("recipe")
+  bindings:
+   #sourceId: Shuffle(0L, <<recipecategory:230>>,4); Mod(<<recipes:1500>>); Template('recipe-{}', LongToString());
+   sourceId: Mod(<<recipes:1500>>); Template('recipe-{}', LongToString());
+   categoryKey: Shuffle(0L,<<recipecategory:230>>,4); Mod(<<categories:200>>); Template('category-{}', LongToString());
 - name: add-item-prices
   tags:
    phase: add-item-prices
@@ -197,11 +212,16 @@ blocks:
               values("divUpc")
 
 bindings:
- divCoupon: Shuffle(0L,<<offers:150000>>L,1); Mod(<<offers:150000>>); Template('offer-{}',LongToString());
- divUpc: Mod(<<items:230000>>); Template('item-{}', LongToString());
- tokenName: Shuffle(0L,<<tokens:230000>>,2); Mod(<<tokens:230000>>); Template('token-{}', LongToString());
- ingredientName: Shuffle(0L,<<ingredients:2300>>,3); Mod(<<ingredients:2300>>); Template('ingredient-{}', LongToString());
- sourceId: Shuffle(0L,<<recipes:230>>,3); Mod(<<recipes:230>>); Template('recipe-{}', LongToString());
- categoryKey: Shuffle(0L,<<categories:3>>,4); Mod(<<categories:3>>); Template('category-{}', LongToString());
+ divCoupon: Shuffle(0L,<<offeritem:150000>>L,1); Mod(<<offers:150000>>); Template('offer-{}',LongToString());
+ divUpc: Mod(<<itemtoken:230000>>); Template('item-{}', LongToString());
+ tokenName: Shuffle(0L,<<tokeningredient:230000>>,2); Mod(<<tokens:230000>>); Template('token-{}', LongToString());
+ ingredientName: Shuffle(0L,<<ingredientrecipe:2300>>,3); Mod(<<ingredients:2300>>); Template('ingredient-{}', LongToString());
+ sourceId: Shuffle(0L, <<recipecategory:230>>,4); Mod(<<recipes:230>>); Template('recipe-{}', LongToString());
+ categoryKey: Shuffle(0L,<<categories:3>>,5); Mod(<<categories:3>>); Template('category-{}', LongToString());
  regularRetailAmount: Mod(<<items:230000>>); normal(10,2); Add(3); ToLong()
  loyaltyRetailAmount: Mod(<<items:230000>>); normal(8,2);ToLong()
+#recipecategory=20
+#tokeningredient=20
+#ingredientrecipe=20
+#offeritem=20
+#itemtoken=20

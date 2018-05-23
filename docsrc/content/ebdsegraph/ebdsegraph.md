@@ -1,10 +1,10 @@
 ---
 weight: 20
-title: Sample
+title: EBDSE Graph
 menu:
   main:
-      parent: Sample
-      identifier: sample
+      parent: EBDSE Graph
+      identifier: ebdseGraph
       weight: 201
 ---
 

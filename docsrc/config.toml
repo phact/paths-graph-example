@@ -1,5 +1,5 @@
 languageCode = "en-us"
-title = "Asset Name"
+title = "Graph Offers"
 theme = "hugo-material-docs"
 metadataformat = "yaml"
 canonifyurls = true
@@ -8,7 +8,7 @@ baseUrl = "/"
 disableKinds = ["taxonomy","taxonomyTerm"]
 
 [params]
-	description = "Asset Name"
+	description = "Graph Offers"
 
 	logo = "images/asset-hub.svg"
 	favicon = "/images/asset-hub.png"
@@ -29,10 +29,14 @@ disableKinds = ["taxonomy","taxonomyTerm"]
 
 
 [[menu.main]]
-	name   = "Asset Name"
+	name   = "Graph Offers"
 	url    = "/"
 	weight = 10
 [[menu.main]]
+    name   = "EBDSE Graph"
+    url    = "ebdsegraph/"
+    weight = 100
+[[menu.main]]
     name   = "Build and Run"
     url    = "buildandrun/"
-    weight = 100
+    weight = 200

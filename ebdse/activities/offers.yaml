@@ -148,7 +148,6 @@ blocks:
   tags:
    phase: add-offer-item-edge
   statements:
-    - >-
      # Things in curly brackets are Anchors, each Anchor needs a binding to
      # a generator
      #
@@ -156,6 +155,7 @@ blocks:
      #
      # Max E = V1 * V2
      # But in real life, E < V1 * V2 because there are collissions
+    - >-
      g.addV('offer').property('divCoupon',{divCoupon}).as("coupon").addV('item').property('divUpc',{divUpc}).addE('OFFER_ITEM').from("coupon")
   bindings:
     divCoupon: Shuffle(0L,<<offeritem:150000>>L,1); Mod(<<offers:150000>>); Template('offer-{}',LongToString());

@@ -1,0 +1,99 @@
+# ./ebdse -vv run type=dsegraph yaml=paths tags=phase:create-graph cycles=1
+
+blocks:
+- name: create-graph
+  tags:
+   phase: create-graph
+  statements:
+   # things in pointy brackets <<thing>> come from the CLI and can have a default
+   # <<thing:default>>
+   - system.graph('<<nameofgraph:paths>>').ifNotExists().create()
+# ./ebdse -vv run type=dsegraph yaml=paths graphname=paths tags=phase:graph-schema cycles=1
+- name: graph-schema
+  tags:
+   phase: graph-schema
+  statements:
+   - >-
+    schema.propertyKey('personId').Text().ifNotExists().create();
+    schema.propertyKey('appId').Text().ifNotExists().create();
+    schema.propertyKey('accountId').Text().ifNotExists().create();
+    schema.propertyKey('eventId').Text().ifNotExists().create();
+    schema.propertyKey('badActor').Text().ifNotExists().create();
+
+    schema.vertexLabel('person').partitionKey('personId').properties('badActor').ifNotExists().create();
+    schema.vertexLabel('application').partitionKey('appId').ifNotExists().create();
+    schema.vertexLabel('account').partitionKey('accountId').ifNotExists().create();
+    schema.vertexLabel('event').partitionKey('eventId').ifNotExists().create();
+
+    schema.edgeLabel('familyMember').multiple()
+        .connection('person', 'person').ifNotExists().create();
+    schema.edgeLabel('submittedApp').multiple()
+                .connection('person', 'application').ifNotExists().create();
+    schema.edgeLabel('listedOnApp').multiple()
+                .connection('application', 'person').ifNotExists().create();
+    schema.edgeLabel('ownsAccount').multiple()
+                .connection('person', 'account').ifNotExists().create();
+    schema.edgeLabel('transferTo').multiple()
+                .connection('account', 'event').ifNotExists().create();
+    schema.edgeLabel('transferFrom').multiple()
+                    .connection('event', 'account').ifNotExists().create();
+
+
+
+# ./ebdse -v run type=dsegraph yaml=paths graphname=paths tags=phase:dev-mode cycles=1
+- name: dev-mode
+  tags:
+   phase: dev-mode
+  statements:
+   - schema.config().option('graph.schema_mode').set('Development');
+# ./ebdse -v run type=dsegraph yaml=paths graphname=paths tags=phase:prod-mode cycles=1
+- name: prod-mode
+  tags:
+   phase: prod-mode
+  statements:
+   - schema.config().option('graph.schema_mode').set('Production');
+# ./ebdse -v run type=dsegraph yaml=paths graphname=paths tags=phase:add-familyMember-edge cycles=10
+- name: add-familyMember-edge
+  tags:
+   phase: add-familyMember-edge
+  statements:
+     # Things in curly brackets are Anchors, each Anchor needs a binding to
+     # a generator
+     #
+     # cycles=X offeritem=Y offers=Z
+     #
+     # Max E = V1 * V2
+     # But in real life, E < V1 * V2 because there are collissions
+    - >-
+     g.addV('person').property('personId',{personIdA}).as("personA")
+      .addV('person').property('personId',{personIdB}).as("personB")
+      .addE('familyMember').from("personA")
+      .select("personB").addE('familyMember').to("personA")
+  bindings:
+    personIdA: Shuffle(0L,<<person:4000>>L,1); Template('person-{}',LongToString());
+    personIdB: Shuffle(0L,<<person:4000(>>L,1); Template('person-{}',LongToString());
+
+- name: add-ownsAccount-edge
+  tags:
+   phase: add-ownsAccount-edge
+  statements:
+     # Things in curly brackets are Anchors, each Anchor needs a binding to
+     # a generator
+     #
+     # cycles=X offeritem=Y offers=Z
+     #
+     # Max E = V1 * V2
+     # But in real life, E < V1 * V2 because there are collissions
+    - >-
+     g.addV('person').property('personId',{personIdA}).as("personA")
+      .addV('account').property('accountId',{accountId}).as("account")
+      .addE('owns').from("personA")
+  bindings:
+    personIdA: Shuffle(0L,<<person:4000>>L,1); Template('person-{}',LongToString());
+    accountId: Shuffle(0L,<<account:4000(>>L,1); Template('account-{}',LongToString());
+
+bindings:
+ personIdA: Shuffle(0L,<<personId:150000>>L,1); Mod(<<personId:150000>>); Template('person-{}',LongToString());
+ personIdB: Shuffle(0L,<<personId:150000>>L,1); Mod(<<personId:150000>>); Template('person-{}',LongToString());
+ accountId: Shuffle(0L,<<account:4000>>L,1); Template('account-{}',LongToString());
+

@@ -3,25 +3,24 @@
 set -x
 
 #Vs
-offers=4000
-items=2300
-tokens=1500
-ingredients=150
-recipes=150
-categories=200
+person=4000
+application=400
+account=4000
+event=40000
 
 #Es
-recipecategory=145
-tokeningredient=150
-ingredientrecipe=300
-offeritem=4000
-itemtoken=1500
+familyMember=10
+submittedApp=400
+listedOnApp=400
+ownsAccount=4000
+transferTo=40000
+transferFrom=40000
 
 #misc
 rate=10k
 threads=64
 host=localhost
-graphname=offers3
+graphname=paths
 reads=100
 #arg=-v
 
@@ -32,22 +31,12 @@ reads=100
 # host - a dse node
 # nameofgraph is a <<>> pointy bracket thing in the yaml
 # you are not allowed to provide a graphname argument in the create call
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers tags=phase:create-graph cycles=1 host=$host nameofgraph=$graphname
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths tags=phase:create-graph cycles=1 host=$host nameofgraph=$graphname
 
 # graphname is required in all the dsegraph types unless you are creating a graph
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:graph-schema cycles=1 host=$host
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:graph-schema cycles=1 host=$host
 
 # The rest of these are <<>> in the yaml
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-recipe-category-edge cycles=$recipecategory recipecategory=$recipecategory  cyclerate=$rate host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-familyMember-edge cycles=familyMember recipecategory=familyMember  cyclerate=$rate host=$host threads=$threads
 
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-ingredient-recipe-edge cycles=$ingredientrecipe ingredientrecipe=$ingredientrecipe  cyclerate=$rate host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
-
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-token-ingredient-edge cycles=$tokeningredient tokeningredient=$tokeningredient  cyclerate=$rate host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
-
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-item-token-edge cycles=$itemtoken itemtoken=$itemtoken  cyclerate=$rate host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
-
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-offer-item-edge cycles=$offeritem offeritem=$offeritem  cyclerate=$rate host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
-
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-item-prices cycles=$items cyclerate=$rate host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
-
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:read cycles=$reads cyclerate=$rate host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-ownsAccount-edge cycles=ownsAccount ingredientrecipe=ownsAccount  cyclerate=$rate host=$host threads=$threads 

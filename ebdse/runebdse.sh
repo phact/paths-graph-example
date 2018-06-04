@@ -7,8 +7,8 @@ offers=4000
 items=2300
 tokens=1500
 ingredients=150
-recipes=15
-categories=20
+recipes=150
+categories=200
 
 #Es
 recipecategory=145
@@ -20,7 +20,7 @@ itemtoken=1500
 #misc
 rate=10k
 threads=64
-host=node0
+host=localhost
 graphname=offers3
 reads=100
 #arg=-v

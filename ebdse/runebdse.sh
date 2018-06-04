@@ -3,19 +3,19 @@
 set -x
 
 #Vs
-offers=4000000
-items=2300000
-tokens=1500000
-ingredients=150000
-recipes=15000
-categories=201
+offers=4000
+items=2300
+tokens=1500
+ingredients=150
+recipes=15
+categories=20
 
 #Es
-recipecategory=145000
-tokeningredient=150000
-ingredientrecipe=300000
-offeritem=4000000
-itemtoken=1500000
+recipecategory=145
+tokeningredient=150
+ingredientrecipe=300
+offeritem=4000
+itemtoken=1500
 
 #misc
 rate=10k

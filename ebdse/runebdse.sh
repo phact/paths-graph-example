@@ -37,6 +37,6 @@ reads=100
 /tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:graph-schema cycles=1 host=$host
 
 # The rest of these are <<>> in the yaml
-/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-familyMember-edge cycles=familyMember recipecategory=familyMember  cyclerate=$rate host=$host threads=$threads
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-familyMember-edge cycles=$familyMember person=$person cyclerate=$rate host=$host threads=$threads
 
-/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-ownsAccount-edge cycles=ownsAccount ingredientrecipe=ownsAccount  cyclerate=$rate host=$host threads=$threads 
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-ownsAccount-edge cycles=$ownsAccount account=$account person=$person cyclerate=$rate host=$host threads=$threads

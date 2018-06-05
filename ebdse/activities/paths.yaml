@@ -52,7 +52,7 @@ blocks:
    phase: prod-mode
   statements:
    - schema.config().option('graph.schema_mode').set('Production');
-# ./ebdse -v run type=dsegraph yaml=paths graphname=paths tags=phase:add-familyMember-edge cycles=10
+# ./ebdse -v run type=dsegraph yaml=paths graphname=paths tags=phase:add-familyMember-edge cycles=familyMember
 - name: add-familyMember-edge
   tags:
    phase: add-familyMember-edge
@@ -70,8 +70,8 @@ blocks:
       .addE('familyMember').from("personA")
       .select("personB").addE('familyMember').to("personA")
   bindings:
-    personIdA: Shuffle(0L,<<person:4000>>L,1); Template('person-{}',LongToString());
-    personIdB: Shuffle(0L,<<person:4000(>>L,1); Template('person-{}',LongToString());
+    personIdA: Shuffle(0L,<<person:150000>>L,1); Template('person-{}',LongToString());
+    personIdB: Shuffle(0L,<<person:150000>>L,1); Template('person-{}',LongToString());
 
 - name: add-ownsAccount-edge
   tags:
@@ -87,13 +87,13 @@ blocks:
     - >-
      g.addV('person').property('personId',{personIdA}).as("personA")
       .addV('account').property('accountId',{accountId}).as("account")
-      .addE('owns').from("personA")
+      .addE('ownsAccount').from("personA")
   bindings:
-    personIdA: Shuffle(0L,<<person:4000>>L,1); Template('person-{}',LongToString());
-    accountId: Shuffle(0L,<<account:4000(>>L,1); Template('account-{}',LongToString());
+    personIdA: Shuffle(0L,<<person:150000>>L,1); Template('person-{}',LongToString());
+    accountId: Shuffle(0L,<<account:150000>>L,1); Template('account-{}',LongToString());
 
 bindings:
- personIdA: Shuffle(0L,<<personId:150000>>L,1); Mod(<<personId:150000>>); Template('person-{}',LongToString());
- personIdB: Shuffle(0L,<<personId:150000>>L,1); Mod(<<personId:150000>>); Template('person-{}',LongToString());
- accountId: Shuffle(0L,<<account:4000>>L,1); Template('account-{}',LongToString());
+ personIdA: Shuffle(0L,<<person:150000>>L,1); Template('person-{}',LongToString());
+ personIdB: Shuffle(0L,<<person:150000>>L,1); Template('person-{}',LongToString());
+ accountId: Shuffle(0L,<<account:150000>>L,1); Template('account-{}',LongToString());
 

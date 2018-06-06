@@ -101,8 +101,8 @@ blocks:
       .addE('familyMember').from("personA")
       .select("personB").addE('familyMember').to("personA")
   bindings:
-    personIdA: Shuffle(0L,<<person:15000>>L,1); Template('person-{}',LongToString());
-    personIdB: Shuffle(0L,<<person:15000>>L,1); Template('person-{}',LongToString());
+    personIdA: HashRange(0,<<person:15000>>); Mod(<<person:15000>>); Template('person-{}',LongToString());
+    personIdB: HashRange(0,<<person:15000>>); Add(1); Mod(<<person:15000>>); Template('person-{}',LongToString());
 
 # Next, continue graph construction by adding the person--submittedApp-->application, and app--listedOnApp->person vertex-edge-vertex
 - name: add-submittedApp-edge
@@ -119,9 +119,9 @@ blocks:
       .select("personB")
       .addE('listedOnApp').from("app")
   bindings:
-    personIdA: Shuffle(0L,<<person:15000>>L,1); Template('person-{}',LongToString());
-    personIdB: Shuffle(0L,<<person:15000>>L,1); Template('person-{}',LongToString());
-    appId: Shuffle(0L,<<appId:15000>>L,1); Template('app-{}',LongToString());
+   personIdA: HashRange(0,<<person:15000>>); Mod(<<person:15000>>); Template('person-{}',LongToString());
+   personIdB: HashRange(0,<<person:15000>>); Add(1); Mod(<<person:15000>>); Template('person-{}',LongToString());
+   appId: HashRange(0,<<application:1500>>); Mod(<<person:1500>>); Template('app-{}',LongToString());
 
 # Lastly, create events to/from accounts
 - name: add-event-edge
@@ -132,12 +132,12 @@ blocks:
     # Generators are defined in the bindings section
     - >-
      g.addV('event').property('eventId',{eventId}).as("event")
-      .addV('account').property('accountId',{appIdA}).property('hasEvent','True').as("accA")
-      .addV('account').property('accountId',{appIdB}).property('hasEvent','True').as("accB")
+      .addV('account').property('accountId',{accountIdA}).property('hasEvent','True').as("accA")
+      .addV('account').property('accountId',{accountIdB}).property('hasEvent','True').as("accB")
       .addE('transferInto').from("event")
       .select("accA")
       .addE('transferFrom').to("event")
   bindings:
-    eventId: Shuffle(0L,<<appId:40000>>L,1); Template('event-{}',LongToString());
-    appIdA: Shuffle(0L,<<appId:15000>>L,1); Template('app-{}',LongToString());
-    appIdB: Shuffle(0L,<<appId:15000>>L,1); Template('app-{}',LongToString());
+    eventId: Shuffle(0L,<<event:40000>>L,1); Template('event-{}',LongToString());
+    accountIdA: HashRange(0,<<event:40000>>); Mod(<<account:15000>>); Template('account-{}',LongToString());
+    accountIdB: HashRange(0,<<event:40000>>); Add(1); Mod(<<account:15000>>); Template('account-{}',LongToString());

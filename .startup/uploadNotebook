@@ -22,4 +22,4 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 
-#curl -H "Accept-Encoding: gzip" -X POST -F 'file=@offers_2_2018-05-17_13_01_14.studio-nb.tar' http://"$IP":9091/api/v1/notebooks/import &> /dev/null
+curl -H "Accept-Encoding: gzip" -X POST -F 'file=@paths-graph_2018-06-06_14_31_58.studio-nb.tar' http://"$IP":9091/api/v1/notebooks/import &> /dev/null

@@ -21,7 +21,7 @@ transferFrom=40000
 #misc
 rate=10k
 threads=64
-host=node0
+host=localhost
 graphname=paths
 reads=100
 #arg=-v

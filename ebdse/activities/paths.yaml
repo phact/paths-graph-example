@@ -1,0 +1,143 @@
+# ./ebdse -vv run type=dsegraph yaml=paths tags=phase:create-graph cycles=1
+
+blocks:
+- name: create-graph
+  tags:
+   phase: create-graph
+  statements:
+   # things in pointy brackets <<thing>> come from the CLI and can have a default
+   # <<thing:default>>
+   - system.graph('<<nameofgraph:paths>>').ifNotExists().create()
+# ./ebdse -vv run type=dsegraph yaml=paths graphname=paths tags=phase:graph-schema cycles=1
+- name: graph-schema
+  tags:
+   phase: graph-schema
+  statements:
+   - >-
+    schema.propertyKey('personId').Text().ifNotExists().create();
+    schema.propertyKey('appId').Text().ifNotExists().create();
+    schema.propertyKey('accountId').Text().ifNotExists().create();
+    schema.propertyKey('eventId').Text().ifNotExists().create();
+    schema.propertyKey('cardNum').Text().ifNotExists().create();
+    schema.propertyKey('deviceId').Text().ifNotExists().create();
+
+    schema.propertyKey('hasFamily').Text().ifNotExists().create();
+    schema.propertyKey('hasApp').Text().ifNotExists().create();
+    schema.propertyKey('listedOnApp').Text().ifNotExists().create();
+    schema.propertyKey('hasEvent').Text().ifNotExists().create();
+    schema.propertyKey('badActor').Text().ifNotExists().create();
+
+    schema.vertexLabel('person').partitionKey('personId').properties('badActor').ifNotExists().create();
+    schema.vertexLabel('application').partitionKey('appId').ifNotExists().create();
+    schema.vertexLabel('account').partitionKey('accountId').ifNotExists().create();
+    schema.vertexLabel('event').partitionKey('eventId').ifNotExists().create();
+    schema.vertexLabel('creditCard').partitionKey('cardNum').ifNotExists().create();
+    schema.vertexLabel('device').partitionKey('deviceId').ifNotExists().create();
+
+    schema.edgeLabel('familyMember').multiple()
+                .connection('person', 'person').ifNotExists().create();
+    schema.edgeLabel('submittedApp').multiple()
+                .connection('person', 'application').ifNotExists().create();
+    schema.edgeLabel('listedOnApp').multiple()
+                .connection('application', 'person').ifNotExists().create();
+    schema.edgeLabel('ownsAccount').multiple()
+                .connection('person', 'account').ifNotExists().create();
+    schema.edgeLabel('paysWith').multiple()
+                    .connection('person', 'creditCard').ifNotExists().create();
+    schema.edgeLabel('uses').multiple()
+                    .connection('person', 'device').ifNotExists().create();
+    schema.edgeLabel('transferInto').multiple()
+                .connection('account', 'event').ifNotExists().create();
+    schema.edgeLabel('transferFrom').multiple()
+                    .connection('event', 'account').ifNotExists().create();
+
+
+
+# ./ebdse -v run type=dsegraph yaml=paths graphname=paths tags=phase:dev-mode cycles=1
+- name: dev-mode
+  tags:
+   phase: dev-mode
+  statements:
+   - schema.config().option('graph.schema_mode').set('Development');
+# ./ebdse -v run type=dsegraph yaml=paths graphname=paths tags=phase:prod-mode cycles=1
+- name: prod-mode
+  tags:
+   phase: prod-mode
+  statements:
+   - schema.config().option('graph.schema_mode').set('Production');
+
+# Start graph construction by adding the person--owns-->account vertex-edge-vertex
+- name: add-ownsAccount-edge
+  tags:
+   phase: add-ownsAccount-edge
+  statements:
+    # Parameters in {} are Anchors. Each Anchor needs a binding to a generator.
+    # Generators are defined in the bindings section
+    - >-
+     g.addV('person').property('personId',{personId}).property('badActor',{badActor}).as("personA")
+      .addV('account').property('accountId',{accountId}).as("account")
+      .addE('ownsAccount').from("personA")
+      .addV('creditCard').property('cardNum',{cardNum}).as("card")
+      .addE('paysWith').from("personA")
+      .addV('device').property('deviceId',{deviceId}).as("device")
+      .addE('uses').from("personA")
+  bindings:
+    personId: Shuffle(0L,<<person:15000>>L,1); Template('person-{}',LongToString());
+    accountId: Shuffle(0L,<<account:15000>>L,1); Template('account-{}',LongToString());
+    cardNum: Shuffle(0L,<<account:15000>>L,1); Template('card-{}',LongToString());
+    deviceId: Shuffle(0L,<<account:15000>>L,1); Template('device-{}',LongToString());
+    badActor: WeightedStrings('True:0.05; False:0.95')
+
+# Next, continue graph construction by adding the person--familyMember-->person [and vice versa] vertex-edge-vertex
+- name: add-familyMember-edge
+  tags:
+   phase: add-familyMember-edge
+  statements:
+    # Parameters in {} are Anchors. Each Anchor needs a binding to a generator.
+    # Generators are defined in the bindings section
+    - >-
+     g.addV('person').property('personId',{personIdA}).property('hasFamily','True').as("personA")
+      .addV('person').property('personId',{personIdB}).property('hasFamily','True').as("personB")
+      .addE('familyMember').from("personA")
+      .select("personB").addE('familyMember').to("personA")
+  bindings:
+    personIdA: HashRange(0,<<person:15000>>); Mod(<<person:15000>>); Template('person-{}',LongToString());
+    personIdB: HashRange(0,<<person:15000>>); Add(1); Mod(<<person:15000>>); Template('person-{}',LongToString());
+
+# Next, continue graph construction by adding the person--submittedApp-->application, and app--listedOnApp->person vertex-edge-vertex
+- name: add-submittedApp-edge
+  tags:
+   phase: add-submittedApp-edge
+  statements:
+    # Parameters in {} are Anchors. Each Anchor needs a binding to a generator.
+    # Generators are defined in the bindings section
+    - >-
+     g.addV('person').property('personId',{personIdA}).property('hasApp','True').as("personA")
+      .addV('person').property('personId',{personIdB}).property('listedOnApp','True').as("personB")
+      .addV('application').property('appId',{appId}).as("app")
+      .addE('submittedApp').from("personA")
+      .select("personB")
+      .addE('listedOnApp').from("app")
+  bindings:
+   personIdA: HashRange(0,<<person:15000>>); Mod(<<person:15000>>); Template('person-{}',LongToString());
+   personIdB: HashRange(0,<<person:15000>>); Add(1); Mod(<<person:15000>>); Template('person-{}',LongToString());
+   appId: HashRange(0,<<application:1500>>); Mod(<<person:1500>>); Template('app-{}',LongToString());
+
+# Lastly, create events to/from accounts
+- name: add-event-edge
+  tags:
+   phase: add-event-edge
+  statements:
+    # Parameters in {} are Anchors. Each Anchor needs a binding to a generator.
+    # Generators are defined in the bindings section
+    - >-
+     g.addV('event').property('eventId',{eventId}).as("event")
+      .addV('account').property('accountId',{accountIdA}).property('hasEvent','True').as("accA")
+      .addV('account').property('accountId',{accountIdB}).property('hasEvent','True').as("accB")
+      .addE('transferInto').from("event")
+      .select("accA")
+      .addE('transferFrom').to("event")
+  bindings:
+    eventId: Shuffle(0L,<<event:40000>>L,1); Template('event-{}',LongToString());
+    accountIdA: HashRange(0,<<event:40000>>); Mod(<<account:15000>>); Template('account-{}',LongToString());
+    accountIdB: HashRange(0,<<event:40000>>); Add(1); Mod(<<account:15000>>); Template('account-{}',LongToString());

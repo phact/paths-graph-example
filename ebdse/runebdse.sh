@@ -3,25 +3,26 @@
 set -x
 
 #Vs
-offers=4000000
-items=2300000
-tokens=1500000
-ingredients=150000
-recipes=15000
-categories=201
+person=15000
+application=1500
+creditCard=1500
+device=1500
+account=15000
+event=40000
 
 #Es
-recipecategory=145000
-tokeningredient=150000
-ingredientrecipe=300000
-offeritem=4000000
-itemtoken=1500000
+familyMember=1000
+submittedApp=400
+listedOnApp=400
+ownsAccount=4000
+transferTo=40000
+transferFrom=40000
 
 #misc
 rate=10k
 threads=64
-host=node0
-graphname=offers3
+host=localhost
+graphname=paths
 reads=100
 #arg=-v
 
@@ -32,22 +33,21 @@ reads=100
 # host - a dse node
 # nameofgraph is a <<>> pointy bracket thing in the yaml
 # you are not allowed to provide a graphname argument in the create call
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers tags=phase:create-graph cycles=1 host=$host nameofgraph=$graphname
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths tags=phase:create-graph cycles=1 host=$host nameofgraph=$graphname
 
 # graphname is required in all the dsegraph types unless you are creating a graph
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:graph-schema cycles=1 host=$host
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:graph-schema cycles=1 host=$host
 
 # The rest of these are <<>> in the yaml
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-recipe-category-edge cycles=$recipecategory recipecategory=$recipecategory  cyclerate=$rate host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
 
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-ingredient-recipe-edge cycles=$ingredientrecipe ingredientrecipe=$ingredientrecipe  cyclerate=$rate host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+# add initial star graphs of person with accounts, cards, and devices
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-ownsAccount-edge cycles=$ownsAccount cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event
 
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-token-ingredient-edge cycles=$tokeningredient tokeningredient=$tokeningredient  cyclerate=$rate host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+# connect family members
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-familyMember-edge cycles=$familyMember cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event
 
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-item-token-edge cycles=$itemtoken itemtoken=$itemtoken  cyclerate=$rate host=$host threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+# add applications between people
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-submittedApp-edge cycles=$application cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event
 
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-offer-item-edge cycles=$offeritem offeritem=$offeritem  cyclerate=$rate host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
-
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:add-item-prices cycles=$items cyclerate=$rate host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
-
-/tmp/ebdse/ebdse run type=dsegraph yaml=offers graphname=$graphname tags=phase:read cycles=$reads cyclerate=$rate host=$host  threads=$threads offers=$offers items=$items ingredients=$ingredients recipes=$recipes categories=$categories tokens=$tokens
+# add events between accounts
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-event-edge cycles=$event cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event

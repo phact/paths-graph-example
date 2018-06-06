@@ -29,7 +29,7 @@ blocks:
 
     schema.vertexLabel('person').partitionKey('personId').properties('badActor', 'hasFamily', 'hasApp', 'listedOnApp', 'hasEvent').ifNotExists().create();
     schema.vertexLabel('application').partitionKey('appId').ifNotExists().create();
-    schema.vertexLabel('account').partitionKey('accountId').ifNotExists().create();
+    schema.vertexLabel('account').partitionKey('accountId').properties('hasEvent').ifNotExists().create();
     schema.vertexLabel('event').partitionKey('eventId').ifNotExists().create();
     schema.vertexLabel('creditCard').partitionKey('cardNum').ifNotExists().create();
     schema.vertexLabel('device').partitionKey('deviceId').ifNotExists().create();
@@ -43,13 +43,13 @@ blocks:
     schema.edgeLabel('ownsAccount').multiple()
                 .connection('person', 'account').ifNotExists().create();
     schema.edgeLabel('paysWith').multiple()
-                    .connection('person', 'creditCard').ifNotExists().create();
+                .connection('person', 'creditCard').ifNotExists().create();
     schema.edgeLabel('uses').multiple()
-                    .connection('person', 'device').ifNotExists().create();
+                .connection('person', 'device').ifNotExists().create();
     schema.edgeLabel('transferInto').multiple()
-                .connection('account', 'event').ifNotExists().create();
+                .connection('event', 'account').ifNotExists().create();
     schema.edgeLabel('transferFrom').multiple()
-                    .connection('event', 'account').ifNotExists().create();
+                .connection('account', 'event').ifNotExists().create();
 
 
 

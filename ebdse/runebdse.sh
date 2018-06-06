@@ -22,7 +22,7 @@ transferFrom=40000
 rate=10k
 threads=64
 host=localhost
-graphname=paths
+graphname=paths_4
 reads=100
 #arg=-v
 

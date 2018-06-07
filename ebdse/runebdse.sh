@@ -3,26 +3,26 @@
 set -x
 
 #Vs
-person=15000
-application=1500
-creditCard=1500
-device=1500
-account=15000
-event=40000
+person=150427
+application=15042
+creditCard=94427
+device=73237
+account=150427
+event=1504270
 
 #Es
-familyMember=1000
-submittedApp=400
-listedOnApp=400
-ownsAccount=4000
-transferTo=40000
-transferFrom=40000
+familyMember=30000
+submittedApp=15042
+listedOnApp=15042
+ownsAccount=150427
+transferTo=1504270
+transferFrom=1504270
 
 #misc
 rate=10k
 threads=64
 host=localhost
-graphname=paths_4
+graphname=paths
 reads=100
 #arg=-v
 
@@ -33,21 +33,30 @@ reads=100
 # host - a dse node
 # nameofgraph is a <<>> pointy bracket thing in the yaml
 # you are not allowed to provide a graphname argument in the create call
+
+# ### 1. CREATE THE GRAPH #####
 /tmp/ebdse/ebdse run type=dsegraph yaml=paths tags=phase:create-graph cycles=1 host=$host nameofgraph=$graphname
 
-# graphname is required in all the dsegraph types unless you are creating a graph
+# ### 2. PRODUCTION MODE #####
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:prod-mode cycles=1 host=$host
+
+# ### 2. CREATE THE SCHEMA #####
 /tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:graph-schema cycles=1 host=$host
 
-# The rest of these are <<>> in the yaml
+# ### 3. INITIALIZE PEOPLE VERTICES #####
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:insert-people cycles=$person cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event
 
-# add initial star graphs of person with accounts, cards, and devices
-/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-ownsAccount-edge cycles=$ownsAccount cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event
+# ### 4. CREATE STAR GRAPHS #####
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-ownsAccount-edge cycles=$person cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event
 
-# connect family members
+# ### 5. CREATE FAMILY MEMBERS #####
 /tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-familyMember-edge cycles=$familyMember cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event
 
-# add applications between people
+# ### 6. CREATE APPLICATIONS #####
 /tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-submittedApp-edge cycles=$application cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event
 
-# add events between accounts
+# ### 7. CREATE EVENTS BETWEEN ACCOUNTS #####
 /tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:add-event-edge cycles=$event cyclerate=$rate host=$host threads=$threads account=$account person=$person application=$application creditCard=$creditCard device=$device event=$event
+
+# ### 8. TURN ON ANALYTICS QUERIES #####
+/tmp/ebdse/ebdse run type=dsegraph yaml=paths graphname=$graphname tags=phase:queries-enabled cycles=1 host=$host

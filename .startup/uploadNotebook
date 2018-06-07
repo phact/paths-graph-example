@@ -22,4 +22,4 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 
-curl -H "Accept-Encoding: gzip" -X POST -F 'file=@paths-graph_2__2018-06-06_17_32_40.studio-nb.tar' http://"$IP":9091/api/v1/notebooks/import &> /dev/null
+curl -H "Accept-Encoding: gzip" -X POST -F 'file=@MissionGraphLite.studio-nb.tar' http://"$IP":9091/api/v1/notebooks/import &> /dev/null

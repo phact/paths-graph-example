@@ -103,8 +103,8 @@ blocks:
   bindings:
     personId: Shuffle(0L,<<person:15000>>L,1); Template('person-{}',LongToString());
     accountId: Shuffle(0L,<<account:15000>>L,1); Template('account-{}',LongToString());
-    cardNum: Shuffle(0L,<<creditCard:1500>>L,1); Template('card-{}',LongToString());
-    deviceId: Shuffle(0L,<<device:1500>>L,1); Template('device-{}',LongToString());
+    cardNum: HashRange(1,<<creditCard:15000>>); Template('card-{}',LongToString());
+    deviceId: HashRange(1,<<device:15000>>);; Template('device-{}',LongToString());
     badActor: WeightedStrings('Yes:0.05;No:0.95')
 
 # Next, continue graph construction by adding the person--familyMember-->person [and vice versa] vertex-edge-vertex

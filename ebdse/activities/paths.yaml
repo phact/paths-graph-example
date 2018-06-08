@@ -120,8 +120,8 @@ blocks:
       .addE('familyMember').from("personA")
       .select("personB").addE('familyMember').to("personA")
   bindings:
-    personIdA: HashRange(0,<<person:15000>>); Mod(<<person:15000>>); Template('person-{}',LongToString());
-    personIdB: HashRange(0,<<person:15000>>); Add(1); Mod(<<person:15000>>); Template('person-{}',LongToString());
+    personIdA: HashRange(1,<<person:15000>>); Mod(<<person:15000>>); Template('person-{}',LongToString());
+    personIdB: HashRange(1,<<person:15000>>); Add(1); Mod(<<person:15000>>); Template('person-{}',LongToString());
 
 # Next, continue graph construction by adding the person--submittedApp-->application, and app--listedOnApp->person vertex-edge-vertex
 - name: add-submittedApp-edge
@@ -138,9 +138,9 @@ blocks:
       .select("personB")
       .addE('listedOnApp').from("app")
   bindings:
-   personIdA: HashRange(0,<<person:15000>>); Mod(<<person:15000>>); Template('person-{}',LongToString());
-   personIdB: HashRange(0,<<person:15000>>); Add(1); Mod(<<person:15000>>); Template('person-{}',LongToString());
-   appId: HashRange(0,<<application:1500>>); Mod(<<application:1500>>); Template('app-{}',LongToString());
+   personIdA: HashRange(1,<<person:15000>>); Mod(<<person:15000>>); Template('person-{}',LongToString());
+   personIdB: HashRange(1,<<person:15000>>); Add(1); Mod(<<person:15000>>); Template('person-{}',LongToString());
+   appId: HashRange(1,<<application:1500>>); Mod(<<application:1500>>); Template('app-{}',LongToString());
 
 # Lastly, create events to/from accounts
 - name: add-event-edge
@@ -158,5 +158,5 @@ blocks:
       .addE('transferFrom').to("event")
   bindings:
     eventId: Shuffle(0L,<<event:40000>>L,1); Template('event-{}',LongToString());
-    accountIdA: HashRange(0,<<event:40000>>); Mod(<<account:15000>>); Template('account-{}',LongToString());
-    accountIdB: HashRange(0,<<event:40000>>); Add(1); Mod(<<account:15000>>); Template('account-{}',LongToString());
+    accountIdA: HashRange(1,<<event:40000>>); Mod(<<account:15000>>); Template('account-{}',LongToString());
+    accountIdB: HashRange(1,<<event:40000>>); Add(1); Mod(<<account:15000>>); Template('account-{}',LongToString());

@@ -140,7 +140,7 @@ blocks:
   bindings:
    personIdA: HashRange(1,<<person:15000>>); Mod(<<person:15000>>); Template('person-{}',LongToString());
    personIdB: HashRange(1,<<person:15000>>); Add(1); Mod(<<person:15000>>); Template('person-{}',LongToString());
-   appId: HashRange(1,<<application:1500>>); Mod(<<application:1500>>); Template('app-{}',LongToString());
+   appId: Shuffle(0L,<<application:15000>>L,1); Template('app-{}',LongToString());
 
 # Lastly, create events to/from accounts
 - name: add-event-edge

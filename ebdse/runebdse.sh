@@ -7,7 +7,7 @@ person=500000
 account=500000       # same as person
 application=25000    # 5% of person
 creditCard=375000    # 75% of person
-device=25000         # 5% of person
+device=375000        # 75% of person
 event=2000000        # 4x person
 
 #Es

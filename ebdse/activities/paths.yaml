@@ -93,7 +93,8 @@ blocks:
     # Parameters in {} are Anchors. Each Anchor needs a binding to a generator.
     # Generators are defined in the bindings section
     - >-
-     g.addV('person').property('personId',{personId}).property('badActor',{badActor}).as("personA")
+     g.addV('person').property('personId',{personId})
+      .property('badActor',{badActor}).as("personA")
       .addV('account').property('accountId',{accountId}).as("account")
       .addE('ownsAccount').from("personA")
       .addV('creditCard').property('cardNum',{cardNum}).as("card")

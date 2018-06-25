@@ -3,20 +3,20 @@
 set -x
 
 #Vs
-person=50000000
-account=50000000       # same as person
-application=2500000    # 5% of person
-creditCard=37500000    # 75% of person
-device=37500000        # 75% of person
-event=200000000        # 4x person
+person=5000000
+account=5000000       # same as person
+application=250000    # 5% of person
+creditCard=3750000    # 75% of person
+device=3750000        # 75% of person
+event=20000000        # 4x person
 
 #Es
-familyMember=12500000  # 25% of person
-submittedApp=2500000   # same as application
-listedOnApp=50000000   # same as account
-ownsAccount=50000000   # same as account
-transferTo=200000000   # same as event
-transferFrom=200000000 # same as event
+familyMember=1250000  # 25% of person
+submittedApp=250000   # same as application
+listedOnApp=5000000   # same as account
+ownsAccount=5000000   # same as account
+transferTo=20000000   # same as event
+transferFrom=20000000 # same as event
 
 #misc
 rate=10k

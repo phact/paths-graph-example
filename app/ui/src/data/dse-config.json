@@ -1,0 +1,176 @@
+{
+  "version": "v1",
+  "config": {
+    "visState": {
+      "filters": [],
+      "layers": [
+        {
+          "id": "jodvvwm",
+          "type": "point",
+          "config": {
+            "dataId": "dsedata",
+            "label": "Circles by User",
+            "color": [
+              179,
+              173,
+              158
+            ],
+            "columns": {
+              "lat": "lat",
+              "lng": "lon",
+              "altitude": "elevation"
+            },
+            "isVisible": true,
+            "visConfig": {
+              "radius": 30.3,
+              "fixedRadius": false,
+              "opacity": 0.8,
+              "outline": false,
+              "thickness": 2,
+              "colorRange": {
+                "name": "Global Warming",
+                "type": "sequential",
+                "category": "Uber",
+                "colors": [
+                  "#5A1846",
+                  "#900C3F",
+                  "#C70039",
+                  "#E3611C",
+                  "#F1920E",
+                  "#FFC300"
+                ]
+              },
+              "radiusRange": [
+                0,
+                50
+              ],
+              "hi-precision": false
+            }
+          },
+          "visualChannels": {
+            "colorField": {
+              "name": "vehicleId",
+              "type": "string"
+            },
+            "colorScale": "ordinal",
+            "sizeField": null,
+            "sizeScale": "linear"
+          }
+        },
+        {
+          "id": "wyaw7bc",
+          "type": "hexagon",
+          "config": {
+            "dataId": "dsedata",
+            "label": "Hexagons",
+            "color": [
+              23,
+              184,
+              190
+            ],
+            "columns": {
+              "lat": "lat",
+              "lng": "lon"
+            },
+            "isVisible": false,
+            "visConfig": {
+              "opacity": 0.8,
+              "worldUnitSize": 0.05,
+              "resolution": 8,
+              "colorRange": {
+                "name": "ColorBrewer RdYlBu-10",
+                "type": "diverging",
+                "category": "ColorBrewer",
+                "colors": [
+                  "#313695",
+                  "#4575b4",
+                  "#74add1",
+                  "#abd9e9",
+                  "#e0f3f8",
+                  "#fee090",
+                  "#fdae61",
+                  "#f46d43",
+                  "#d73027",
+                  "#a50026"
+                ],
+                "reversed": true
+              },
+              "coverage": 1,
+              "sizeRange": [
+                0,
+                500
+              ],
+              "percentile": [
+                0,
+                100
+              ],
+              "elevationPercentile": [
+                0,
+                100
+              ],
+              "elevationScale": 1,
+              "hi-precision": false,
+              "colorAggregation": "average",
+              "sizeAggregation": "average",
+              "enable3d": true
+            }
+          },
+          "visualChannels": {
+            "colorField": {
+              "name": "speed",
+              "type": "real"
+            },
+            "colorScale": "quantile",
+            "sizeField": {
+              "name": "elevation",
+              "type": "real"
+            },
+            "sizeScale": "linear"
+          }
+        }
+      ],
+      "interactionConfig": {
+        "tooltip": {
+          "fieldsToShow": {
+            "dsedata": [
+              "vehicleId",
+              "timePeriod",
+              "collect_time",
+              "acceleration",
+              "elapsedTime"
+            ]
+          },
+          "enabled": true
+        },
+        "brush": {
+          "size": 0.5,
+          "enabled": false
+        }
+      },
+      "layerBlending": "normal",
+      "splitMaps": []
+    },
+    "mapState": {
+      "bearing": 0,
+      "dragRotate": false,
+      "latitude": 40.699838000470706,
+      "longitude": -74.03087986984322,
+      "pitch": 0,
+      "zoom": 13.80187828249628,
+      "isSplit": false
+    },
+    "mapStyle": {
+      "styleType": "dark",
+      "topLayerGroups": {},
+      "visibleLayerGroups": {
+        "label": true,
+        "road": true,
+        "border": true,
+        "building": true,
+        "water": true,
+        "land": true
+      },
+      "mapStyles": {}
+    }
+  }
+}

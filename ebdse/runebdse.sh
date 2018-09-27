@@ -26,6 +26,12 @@ graphname=paths
 reads=100
 #arg=-v
 
+if [ $# -gt 0 ]; then
+    echo $1
+    host=$1
+fi
+
+
 # type is dsegraph, cql, or sparksql (workload type)
 # yaml the name of your yaml in ./activities/
 # tags help you design which block from the yaml to run (user defined in the yaml)

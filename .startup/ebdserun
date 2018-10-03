@@ -15,4 +15,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     IP=localhost
 fi
 
+if [[ "$IP" == "" ]]; then
+    IP=localhost
+fi
+
 cd ebdse && ./runebdse.sh $IP
